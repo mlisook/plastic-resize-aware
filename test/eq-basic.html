@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="../../@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script type="module" src="../../@polymer/polymer/polymer-element.js"></script>
+    <script type="module" src="../plastic-element-query.js"></script>
+    <script src="../../wct-browser-legacy/browser.js"></script>
+    <script src="../../chai/chai.js"></script>
+
+</head>
+
+<body>
+
+
+    <test-fixture id="eqBasicFixture">
+        <template>
+            <div style="display: -webkit-flex; display: flex; max-width: 500px; width: 100%; min-height: 80px;">
+                <div>
+                  <plastic-resize-aware id="ra1">
+                      <plastic-element-query id="eq1" query-expression="(min-width: 380px)" assign-classes="fiz  bin baz"></plastic-element-query>
+                      <plastic-element-query id="eq2" ref-element="ra2" target-element="tstr2"></plastic-element-query>
+                    <div id="tstr" style="background-color: azure; margin: 5px; padding: 5px;">
+                      <p>
+                        This azure area is resize-aware.
+                      </p>
+                    </div>
+                  </plastic-resize-aware>
+                  <plastic-resize-aware id="ra2">
+                        
+                      <div id="tstr2" style="background-color: azure; margin: 5px; padding: 5px;">
+                        <p>
+                          This is a different resize-aware from the other one.
+                        </p>
+                      </div>
+                    </plastic-resize-aware>
+                </div>
+                <div id="col2info" style=" margin: 5px; padding: 5px;"></div>
+              </div>
+        </template>
+    </test-fixture>
+
+    <script type="module">
+        import '../../@polymer/polymer/polymer-element.js'; 
+        import '../plastic-element-query.js'; 
+        describe('plastic-element-query foundation tests', () => {
+
+            let testFixture1, ra1, eq1, tstr, ra2, eq2, tstr2;
+
+            beforeEach(() => {
+                testFixture1 = fixture('eqBasicFixture');
+                ra1 = document.querySelector('#ra1');
+                eq1 = document.querySelector('#eq1');
+                tstr = document.querySelector('#tstr');
+                ra2 = document.querySelector('#ra2');
+                eq2 = document.querySelector('#eq2');
+                tstr2 = document.querySelector('#tstr2');
+            });
+            context('default ref and target', () => {
+
+                it('should have the correct referene', () => {
+                    expect(eq1._refElement.id).to.eql('ra1');
+                });
+                it('should have the correct target', ()=> {
+                    expect(eq1._targetElement.id).to.eql('ra1');
+                });
+            });
+            context('change ref and target', () => {
+                it('should process a target change', () => {
+                    eq1.targetElement = 'tstr';
+                    expect(eq1._targetElement.id).to.eql('tstr');
+                });       
+                it('should process a reference change', () => {
+                    eq1.refElement = "ra2";
+                    expect(eq1._refElement.id).to.eql('ra2');
+                }); 
+            });
+            context('set ref and target in markup', () => {
+                it('should take a reference in markup', () => {
+                    expect(eq2._refElement.id).to.eql('ra2');
+                });
+                it('should take a target in markup', () => {
+                    expect(eq2._targetElement.id).to.eql('tstr2');
+                });
+            });
+            context('get resize events', () => {
+                it('should update the ref element size', () => {
+                    eq1.refElement = "ra1";
+                    return new Promise((resolve, reject) => {
+                        tstr.innerHTML += '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur nec vulputate nisi, in sagittis magna. Aenean pulvinar justo ut urna dapibus, a placerat libero pharetra. Vestibulum quis eleifend erat. Nunc nec turpis consectetur, efficitur ipsum nec, efficitur est. Donec non nibh in justo ultrices bibendum. Mauris molestie nisl in sollicitudin egestas. Nullam placerat dui sed est bibendum congue id ut arcu. Donec eu felis suscipit, fermentum massa id, hendrerit lorem. Ut in placerat nunc. Donec ornare augue quis lacus semper, a elementum augue mollis. Aliquam convallis tempus enim, in venenatis velit viverra ut. Duis porta enim vel mauris pulvinar finibus. Fusce ac quam lorem. Ut ut congue magna, quis facilisis libero. Donec hendrerit tempor nisi malesuada lobortis. Nunc imperdiet nisl ligula, maximus pulvinar dui feugiat eleifend.</p>';
+                        setTimeout(() => {
+                            resolve(eq1._refElementSize.width);
+                        }, 100);
+
+                    })
+                    .then((w) => {
+                        expect(w).to.be.gt(10);
+                    });
+                        
+                });
+            });
+            context('parse a query expression', () => {
+                it('should parse a width query', () => {
+                    expect(eq1._parseQuery('screen and (min-width: 48em)')).to.eql([{
+                        inverse: false, type: 'screen',
+                        expressions: [
+                            {
+                                modifier: 'min',
+                                feature : 'width',
+                                value   : '48em'
+                            }
+                        ]
+                    }
+                    ]);
+                    expect(eq1._parseQuery('(max-width: 88em)')).to.eql([{
+                        inverse: false, type: 'all',
+                        expressions: [
+                            {
+                                modifier: 'max',
+                                feature : 'width',
+                                value   : '88em'
+                            }
+                        ]
+                    }
+                    ]);
+                });
+                it('should parse a height query', () => {
+                    expect(eq1._parseQuery('screen and (min-height: 50px)')).to.eql([{
+                        inverse: false, type: 'screen',
+                        expressions: [
+                            {
+                                modifier: 'min',
+                                feature : 'height',
+                                value   : '50px'
+                            }
+                        ]
+                    }
+                    ]);
+                });
+                it('should parse a width and height query', () => {
+                    expect(eq1._parseQuery('screen and (min-height: 50px) and (min-width: 50px)')).to.eql([{
+                        inverse: false, type: 'screen',
+                        expressions: [
+                            {
+                                modifier: 'min',
+                                feature : 'height',
+                                value   : '50px'
+                            },
+                            {
+                                modifier: 'min',
+                                feature : 'width',
+                                value   : '50px'
+                            }
+                        ]
+                    }
+                    ]);
+                });
+            });
+            context('match a query expression', () => {
+                it('should match a width expression', () => {
+                    expect(eq1._matchQuery('screen and (min-width: 40em)', {type: 'screen', width: '1024px'})).to.eql(true);
+                });
+                it('should not match a width expression', () => {
+                    expect(eq1._matchQuery('screen and (max-width: 40em)', {type: 'screen', width: '1024px'})).to.eql(false);
+                });
+                it('should match a width expression', () => {
+                    expect(eq1._matchQuery('(max-width: 40em)', {type: 'screen', width: '10px', height: '201px'})).to.eql(true);
+                });
+                it('should match a width range expression', () => {
+                    expect(eq1._matchQuery('(max-width: 400px) and (min-width: 100px)', {type: 'screen', width: '110px', height: '201px'})).to.eql(true);
+                });
+                it('should not match a width range expression', () => {
+                    expect(eq1._matchQuery('(max-width: 400px) and (min-width: 100px)', {type: 'screen', width: '10px', height: '201px'})).to.eql(false);
+                });
+                it('should match a width and height expression', () => {
+                    expect(eq1._matchQuery('screen and (min-width: 40em) and (min-height: 50px)', 
+                        {type: 'screen', width: '1024px', height: '200px'})).to.eql(true);
+                });
+                it('should match a width and height expression', () => {
+                    expect(eq1._matchQuery('(min-width: 40em) and (min-height: 50px)', 
+                        {type: 'screen', width: '1024px', height: '200px'})).to.eql(true);
+                });
+                it('should not match a width and height expression', () => {
+                    expect(eq1._matchQuery('screen and (min-width: 40em) and (max-height: 50px)', 
+                        {type: 'screen', width: '1024px', height: '200px'})).to.eql(false);
+                });
+                it('should match an "or" width and height expression', () => {
+                    expect(eq1._matchQuery('(min-width: 500px) and (min-height: 50px),(max-width: 50px) and (max-height: 20px)', 
+                        {type: 'screen', width: '1024px', height: '200px'})).to.eql(true);
+                });
+                it('should match an "or" width and height expression', () => {
+                    expect(eq1._matchQuery('(min-width: 500px) and (min-height: 50px),(max-width: 50px) and (max-height: 20px)', 
+                        {type: 'screen', width: '15px', height: '20px'})).to.eql(true);
+                });
+                it('should not match an "or" width and height expression', () => {
+                    expect(eq1._matchQuery('(min-width: 500px) and (min-height: 50px),(max-width: 50px) and (max-height: 20px)', 
+                        {type: 'screen', width: '150px', height: '20px'})).to.eql(false);
+                });
+            });
+            context('set and remove classes', () => {
+                it('should not be matching to start', () => {
+                    expect(eq1.isMatching).to.eql(false);
+                });
+                it('should match after modification', () => {
+                    tstr.innerHTML += `<div id="spcr" style="width: 400px;height:100px;">spacer</div>`;
+                    return new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            resolve('');
+                        }, 100);
+                    })
+                    .then((w) => {
+                        expect(eq1.isMatching).to.eql(true);
+                        let cn = ra1.className;
+                        expect(cn.length).to.eql(11);
+                        expect(cn.split(' ').length).to.eql(3);
+                    });
+                });
+                it('should not match after modification', () => {
+                    tstr.innerHTML += `<div id="spcr" style="width: 400px;height:100px;">spacer</div>`;
+                    return new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            let spcr = document.getElementById('spcr');
+                            spcr.remove();
+                            setTimeout(() => {
+                                resolve('');
+                            }, 100);
+                        }, 100);
+                    })
+                    .then((w) => {
+                        expect(eq1.isMatching).to.eql(false);
+                        let cn = ra1.className;
+                        expect(cn.length).to.eql(0);
+                    });
+                });
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>
