@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>plastic-resize-aware demo</title>
+
+  <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+
+  <script type="module">
+    import '@polymer/iron-demo-helpers/demo-pages-shared-styles'; import '@polymer/iron-demo-helpers/demo-snippet';
+  </script>
+
+  <script type="module" src="../plastic-resize-aware.js"></script>
+
+  <custom-style>
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+  </custom-style>
+  <style>
+    plastic-resize-aware {
+      min-width: 20%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="vertical-section-container centered">
+    <h3>Basic plastic-resize-aware demo</h3>
+    <demo-snippet>
+      <template>
+        <div style="display: -webkit-flex; display: flex; max-width: 500px; width: 100%; min-height: 80px;">
+          <div>
+            <plastic-resize-aware id="ra1">
+              <div id="tester" style="background-color: azure; margin: 5px; padding: 5px;">
+                <p>
+                  This azure area is resize-aware.
+                </p>
+              </div>
+            </plastic-resize-aware>
+          </div>
+          <div id="col2info" style=" margin: 5px; padding: 5px;"></div>
+        </div>
+        <ul id="chglist">
+
+        </ul>
+        <script>
+          document.querySelector('#ra1').addEventListener('element-resize', function (e) {
+            console.log('demo got event', e);
+            var li = document.createElement('li');
+            li.innerHTML = 'Changed to ' + e.detail.width + ' x ' + e.detail.height;
+            document.querySelector('#chglist').appendChild(li);
+          });
+
+          setTimeout(function () {
+            var t = document.querySelector('#tester');
+            t.innerHTML =
+              '<p>This azure area is plastic-resize-aware.</p><p>It fires an event when its size changes. For example, if the content size changes.</p>';
+          }, 5000);
+          setTimeout(function () {
+            var t = document.querySelector('#col2info');
+            t.innerHTML =
+              '<p>... Or if other elements in the layout change the available space.</p>';
+          }, 10000);
+          setTimeout(function () {
+            var t = document.querySelector('#tester');
+            t.innerHTML +=
+              '<p>Or, of course, if the viewport changes. (try resizing the window).</p>';
+          }, 15000);
+          setTimeout(function () {
+            var t = document.querySelector('#tester');
+            t.innerHTML +=
+              '<p>The element uses a ResizeObserver, which is polyfilled if necessary.</p>';
+          }, 19000);
+          setTimeout(function () {
+            var t = document.querySelector('#col2info');
+            t.innerHTML =
+              '';
+          }, 22000);
+        </script>
+      </template>
+    </demo-snippet>
+  </div>
+
+</body>
+
+</html>

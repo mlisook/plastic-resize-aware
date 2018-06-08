@@ -1,0 +1,86 @@
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script type="module" src="../plastic-resize-aware.js"></script>
+    <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+
+</head>
+
+<body>
+
+
+    <test-fixture id="raBasicFixture">
+        <template>
+            <div style="display: -webkit-flex; display: flex; max-width: 500px; width: 100%; min-height: 80px;">
+                <div>
+                  <plastic-resize-aware id="ra1">
+                    <div id="tstr" style="background-color: azure; margin: 5px; padding: 5px;">
+                      <p>
+                        This azure area is resize-aware.
+                      </p>
+                    </div>
+                  </plastic-resize-aware>
+                  <plastic-resize-aware id="ra2">
+                        
+                      <div id="tstr2" style="background-color: azure; margin: 5px; padding: 5px;">
+                        <p>
+                          This is a different resize-aware from the other one.
+                        </p>
+                      </div>
+                    </plastic-resize-aware>
+                </div>
+                <div id="col2info" style=" margin: 5px; padding: 5px;"></div>
+              </div>
+        </template>
+    </test-fixture>
+
+    <script type="module">
+        import '../../@polymer/polymer/polymer-element.js'; 
+        import '../plastic-resize-aware.js'; 
+        describe('plastic-resize-aware foundation tests', () => {
+
+            let testFixture1, ra1, tstr, ra2, tstr2, col2info;
+
+            beforeEach(() => {
+                testFixture1 = fixture('raBasicFixture');
+                ra1 = document.querySelector('#ra1');
+                tstr = document.querySelector('#tstr');
+                ra2 = document.querySelector('#ra2');
+                tstr2 = document.querySelector('#tstr2');
+                col2info =  document.querySelector("#col2info");
+            });
+            context('Responds to content change', () => {
+
+                it('should receive an event if content changed', () => {
+                    return new Promise((resolve, reject) => {
+                        ra1.addEventListener('element-resize', (e) => {
+                            resolve(e);
+                        });
+                        tstr.innerHTML += '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur nec vulputate nisi, in sagittis magna. Aenean pulvinar justo ut urna dapibus, a placerat libero pharetra. Vestibulum quis eleifend erat. Nunc nec turpis consectetur, efficitur ipsum nec, efficitur est. Donec non nibh in justo ultrices bibendum. Mauris molestie nisl in sollicitudin egestas. Nullam placerat dui sed est bibendum congue id ut arcu. Donec eu felis suscipit, fermentum massa id, hendrerit lorem. Ut in placerat nunc. Donec ornare augue quis lacus semper, a elementum augue mollis. Aliquam convallis tempus enim, in venenatis velit viverra ut. Duis porta enim vel mauris pulvinar finibus. Fusce ac quam lorem. Ut ut congue magna, quis facilisis libero. Donec hendrerit tempor nisi malesuada lobortis. Nunc imperdiet nisl ligula, maximus pulvinar dui feugiat eleifend.</p>';
+                    })
+                    .then((e) => {
+                        expect(e.detail.hasOwnProperty('width')).to.eql(true);
+                    });
+                });
+                it('should receive an event if a different element changes space available', () => {
+                    return new Promise((resolve, reject) => {
+                        ra1.addEventListener('element-resize', (e) => {
+                            resolve(e);
+                        });
+                        col2info.innerHTML += '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur nec vulputate nisi, in sagittis magna. Aenean pulvinar justo ut urna dapibus, a placerat libero pharetra. Vestibulum quis eleifend erat. Nunc nec turpis consectetur, efficitur ipsum nec, efficitur est. Donec non nibh in justo ultrices bibendum. Mauris molestie nisl in sollicitudin egestas. Nullam placerat dui sed est bibendum congue id ut arcu. Donec eu felis suscipit, fermentum massa id, hendrerit lorem. Ut in placerat nunc. Donec ornare augue quis lacus semper, a elementum augue mollis. Aliquam convallis tempus enim, in venenatis velit viverra ut. Duis porta enim vel mauris pulvinar finibus. Fusce ac quam lorem. Ut ut congue magna, quis facilisis libero. Donec hendrerit tempor nisi malesuada lobortis. Nunc imperdiet nisl ligula, maximus pulvinar dui feugiat eleifend.</p>';
+                    })
+                    .then((e) => {
+                        expect(e.detail.hasOwnProperty('width')).to.eql(true);
+                    });
+                });
+            });
+            
+        });
+
+    </script>
+
+</body>
+
+</html>

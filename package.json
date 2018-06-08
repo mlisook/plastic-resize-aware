@@ -1,0 +1,31 @@
+{
+  "name": "plastic-resize-aware",
+  "description": "On Resize and Element Queries for Polymer 3",
+  "version": "1.0.0",
+  "flat": true,
+  "keywords": [
+    "polymer",
+    "polymer 3.0",
+    "resize",
+    "element queries",
+    "ResizeObserver",
+    "3.0",
+    "responsive",
+    "custom-element",
+    "web-components"
+  ],
+  "main": "plastic-resize-aware.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mlisook/plastic-resize-aware.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@polymer/polymer": "^3.0.0"
+  },
+  "devDependencies": {
+    "@polymer/iron-demo-helpers": "^3.0.0-pre.19",
+    "@webcomponents/webcomponentsjs": "^2.0.0",
+    "wct-browser-legacy": "^1.0.0"
+  }
+}
