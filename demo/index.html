@@ -48,7 +48,6 @@
         </ul>
         <script>
           document.querySelector('#ra1').addEventListener('element-resize', function (e) {
-            console.log('demo got event', e);
             var li = document.createElement('li');
             li.innerHTML = 'Changed to ' + e.detail.width + ' x ' + e.detail.height;
             document.querySelector('#chglist').appendChild(li);

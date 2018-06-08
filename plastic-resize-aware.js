@@ -42,11 +42,21 @@ class PlasticResizeAware extends PolymerElement {
     };
   }
 
-  static get importMeta() { return import.meta; }
+  static get importMeta() {
+    return import.meta;
+  }
 
   connectedCallback() {
     super.connectedCallback();
     this._initResizeObserver(false);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    if (window.plasticResizeObserver && window.plasticResizeObserver.observer) {
+      window.plasticResizeObserver.observer.unobserve(this);
+      window.plasticResizeObserver.counter--;
+    }
   }
 
   /**
@@ -98,18 +108,25 @@ class PlasticResizeAware extends PolymerElement {
    * @param {ResizeObserverEntry} entry 
    */
   _roCallback(entry) {
+    /**
+     * Fired when element size changes.
+     *
+     * @event element-resize
+     * @param {number} width
+     * @param {number} height
+     */
     this.dispatchEvent(new CustomEvent('element-resize', {
       detail: {
         width: entry.contentRect.width,
         height: entry.contentRect.height
       }
     }));
-   
+
     this._setElementSize({
       width: entry.contentRect.width,
       height: entry.contentRect.height
     });
-   
+
   }
 }
 

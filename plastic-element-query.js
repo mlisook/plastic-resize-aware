@@ -114,6 +114,13 @@ class PlasticElementQuery extends PolymerElement {
         }
     }
 
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        if (this._refElement) {
+            this._refElement.removeEventListener('element-resize', this._handleResize);
+        }
+    }
+
     /**
      * Returns the parent plastic-resize-aware element
      */
@@ -218,6 +225,17 @@ class PlasticElementQuery extends PolymerElement {
                 let clist = this.assignClasses.split(' ').filter(e => e.length > 0);
                 this._targetElement.classList.add(...clist);
             }
+            /**
+             * Fired when element query matches or no longer matches reference element size
+             *
+             * @event element-query-match
+             * @param {number} width
+             * @param {number} height
+             * @param {string} queryExpression
+             * @param {Boolean} matches
+             * @param {Element} targetElement
+             * @param {string} classList
+             */
             this.dispatchEvent(new CustomEvent('element-query-match', {
                 detail: {
                     queryExpression: this.queryExpression,

@@ -19,7 +19,7 @@ expressions as **element queries** to apply and remove CSS classes on a target e
 <!-- /TOC -->
 ## Prior Versions
 
-Please see the element `resize-aware` for a version that works with Polymer 1.0 or 2.0. The prior version does not
+Please see the element [resize-aware](https://www.webcomponents.org/element/mlisook/resize-aware) for a version that works with Polymer 1.0 or 2.0. The prior version does not
 include element queries.
 
 ## Why and How
